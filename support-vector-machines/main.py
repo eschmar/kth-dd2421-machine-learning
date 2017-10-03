@@ -39,9 +39,9 @@ if __name__ == '__main__':
 
     # Choose kernel
     # kernel = kernels.linear
-    kernel = kernels.polynomialClosure(3)
-    # kernel = kernels.radialBasis(2)
-    # kernel = kernels.sigmoid(2, 2)
+    # kernel = kernels.polynomialClosure(3)
+    kernel = kernels.radialBasisClosure(0.35)
+    # kernel = kernels.sigmoidClosure(0.2, 0.5)
 
     # Create dual formulation terms
     # P_i,j = t_i * t_j * K(\vec{x_i}, \vec{x_j})

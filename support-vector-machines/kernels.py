@@ -10,11 +10,11 @@ def polynomial(x, y, p = 2):
 
 def radialBasis(x, y, sigma):
     """Radial basis kernel function. Adjust sigma to control smoothness."""
-    return numpy.exp((numpy.power(numpy.substract(x, y), 2)) / (2 * numpy.power(sigma, 2)))
+    return numpy.exp((numpy.dot(numpy.subtract(x, y), numpy.subtract(x, y))) / (-2 * numpy.power(sigma, 2)))
 
 def sigmoid(x, y, k, delta):
     """Sigmoid kernel function."""
-    return numpy.tanh(numpy.dot(k * x, y) - delta)
+    return numpy.tanh(k * numpy.dot(x, y) - delta)
 
 #  Closures
 def polynomialClosure(p = 2):
