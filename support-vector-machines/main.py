@@ -67,7 +67,7 @@ if __name__ == '__main__':
     grid = matrix([[indicator(x, y) for y in yrange] for x in xrange])
 
     #  plot all the things
-    pylab.hold(True)
+    # pylab.hold(True)
     pylab.plot([p[0] for p in classA], [p[1] for p in classA], 'bo')
     pylab.plot([p[0] for p in classB], [p[1] for p in classB], 'ro')
     pylab.contour(xrange, yrange, grid, (-1.0, 0.0, 1.0), colors=('red', 'black', 'blue'), linewidths=(1, 3, 1))
