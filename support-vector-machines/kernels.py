@@ -15,3 +15,25 @@ def radialBasis(x, y, sigma):
 def sigmoid(x, y, k, delta):
     """Sigmoid kernel function."""
     return numpy.tanh(numpy.dot(k * x, y) - delta)
+
+#  Closures
+def polynomialClosure(p = 2):
+    """Return the polynomial kernel as a closure."""
+    def kernel(x, y):
+        return polynomial(x, y, p)
+
+    return kernel
+
+def radialBasisClosure(sigma):
+    """Return the radial basis kernel as a closure."""
+    def kernel(x, y):
+        return radialBasis(x, y, sigma)
+
+    return kernel
+
+def sigmoidClosure(k, delta):
+    """Return the sigmoid kernel as a closure."""
+    def kernel(x, y):
+        return sigmoid(x, y, k, delta)
+
+    return kernel

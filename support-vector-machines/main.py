@@ -38,7 +38,10 @@ if __name__ == '__main__':
     n = len(data)
 
     # Choose kernel
-    kernel = kernels.polynomial
+    # kernel = kernels.linear
+    kernel = kernels.polynomialClosure(3)
+    # kernel = kernels.radialBasis(2)
+    # kernel = kernels.sigmoid(2, 2)
 
     # Create dual formulation terms
     # P_i,j = t_i * t_j * K(\vec{x_i}, \vec{x_j})
@@ -48,7 +51,7 @@ if __name__ == '__main__':
 
     for i in range(n):
         for j in range(n):
-            P[i].append(data[i][2] * data[j][2] * kernel([data[i][0], data[i][1]], [data[j][0], data[j][1]], 3))
+            P[i].append(data[i][2] * data[j][2] * kernel([data[i][0], data[i][1]], [data[j][0], data[j][1]]))
 
     q = -1 * numpy.ones(n)
     h = numpy.zeros_like(q)
