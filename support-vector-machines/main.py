@@ -19,6 +19,7 @@ def extractSupportVectors(data, alpha, threshold = 1.e-5):
     return vectors
 
 def generateIndiciator(data, alpha, kernel):
+    """Returns the indicator function as a closure(x, y)."""
     vectors = extractSupportVectors(data, alpha)
     def indicator(x, y):
         result = 0
