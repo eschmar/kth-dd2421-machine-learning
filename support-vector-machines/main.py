@@ -32,8 +32,8 @@ def generateIndiciator(data, alpha, kernel):
     return indicator
 
 # Run
-if __name__ == '__main__':
-    params = helper.parseArguments(sys.argv)
+def run(args):
+    params = helper.parseArguments(args)
 
     # Generate base data
     classA, classB = datagen.generateRandomData(100)
@@ -43,27 +43,27 @@ if __name__ == '__main__':
 
     p = 3
     if '-p' in params:
-        p = params['-p']
+        p = int(params['-p'])
 
     sigma = 2
     if '-sigma' in params:
-        sigma = params['-sigma']
+        sigma = float(params['-sigma'])
 
     k = 0.05
     if '-k' in params:
-        k = params['-k']
+        k = float(params['-k'])
 
     delta = 0
     if '-delta' in params:
-        delta = params['-delta']
+        delta = int(params['-delta'])
 
     # Choose kernel
     if '--polynomial' in params:
-        kernel = kernels.polynomialClosure(2)
+        kernel = kernels.polynomialClosure(p)
     elif '--radial' in params:
-        kernel = kernels.radialBasisClosure(2)
+        kernel = kernels.radialBasisClosure(sigma)
     elif '--sigmoid' in params:
-        kernel = kernels.sigmoidClosure(0.005, 0)
+        kernel = kernels.sigmoidClosure(k, delta)
     else:
         kernel = kernels.linear
 
@@ -95,6 +95,7 @@ if __name__ == '__main__':
 
     #  plot all the things
     # pylab.hold(True)
+    pylab.clf()
     pylab.plot([p[0] for p in classA], [p[1] for p in classA], 'bo')
     pylab.plot([p[0] for p in classB], [p[1] for p in classB], 'ro')
     pylab.contour(xrange, yrange, grid, (-1.0, 0.0, 1.0), colors=('red', 'black', 'blue'), linewidths=(1, 3, 1))
@@ -103,6 +104,10 @@ if __name__ == '__main__':
         filename = 'foo.png'
         if '-o' in params:
             filename = params['-o']
-        pylab.savefig(filename, bbox_inches='tight')
+        # pylab.savefig("out/{0}".format(filename), bbox_inches='tight')
+        pylab.savefig("out/{0}".format(filename))
     else:
         pylab.show();
+
+if __name__ == '__main__':
+    run(sys.argv[1:])
