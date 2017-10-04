@@ -7,9 +7,9 @@ def generateNormalDistribution(a, b, c, d, e, r):
 def generateRandomData(seed = None):
     """Generates random test data."""
     if seed is not None:
-        numpy.random.seed(seed)
+        # numpy.random.seed(seed)
         random.seed(100)
 
-    classA = generateNormalDistribution(0.5, 0.5, -0.5, 0.5, -1.0, 5) + generateNormalDistribution(1.5, 1, 0.5, 1, 1.0, 5)
-    classB = generateNormalDistribution(-1.5, 1, 0.5, 1, 1.0, 10)
+    classA = generateNormalDistribution(-1.5, 1, 0.5, 1, 1.0, 5) + generateNormalDistribution(1.5, 1, 0.5, 1, 1.0, 5)
+    classB = generateNormalDistribution(0.5, 0.5, -0.5, 0.5, -1.0, 10)
     return classA, classB

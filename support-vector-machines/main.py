@@ -1,3 +1,5 @@
+import sys, helper
+
 # Convex optimization packages
 from cvxopt.solvers import qp
 from cvxopt.base import matrix
@@ -31,17 +33,39 @@ def generateIndiciator(data, alpha, kernel):
 
 # Run
 if __name__ == '__main__':
+    params = helper.parseArguments(sys.argv)
+
     # Generate base data
     classA, classB = datagen.generateRandomData(100)
     data = classA + classB
     random.shuffle(data)
     n = len(data)
 
+    p = 3
+    if '-p' in params:
+        p = params['-p']
+
+    sigma = 2
+    if '-sigma' in params:
+        sigma = params['-sigma']
+
+    k = 0.05
+    if '-k' in params:
+        k = params['-k']
+
+    delta = 0
+    if '-delta' in params:
+        delta = params['-delta']
+
     # Choose kernel
-    # kernel = kernels.linear
-    # kernel = kernels.polynomialClosure(3)
-    kernel = kernels.radialBasisClosure(0.35)
-    # kernel = kernels.sigmoidClosure(0.2, 0.5)
+    if '--polynomial' in params:
+        kernel = kernels.polynomialClosure(2)
+    elif '--radial' in params:
+        kernel = kernels.radialBasisClosure(2)
+    elif '--sigmoid' in params:
+        kernel = kernels.sigmoidClosure(0.005, 0)
+    else:
+        kernel = kernels.linear
 
     # Create dual formulation terms
     # P_i,j = t_i * t_j * K(\vec{x_i}, \vec{x_j})
@@ -74,4 +98,11 @@ if __name__ == '__main__':
     pylab.plot([p[0] for p in classA], [p[1] for p in classA], 'bo')
     pylab.plot([p[0] for p in classB], [p[1] for p in classB], 'ro')
     pylab.contour(xrange, yrange, grid, (-1.0, 0.0, 1.0), colors=('red', 'black', 'blue'), linewidths=(1, 3, 1))
-    pylab.show();
+
+    if '--save' in params:
+        filename = 'foo.png'
+        if '-o' in params:
+            filename = params['-o']
+        pylab.savefig(filename, bbox_inches='tight')
+    else:
+        pylab.show();
