@@ -57,6 +57,10 @@ def run(args):
     if '-delta' in params:
         delta = int(params['-delta'])
 
+    C = 0
+    if '-C' in params:
+        C = int(params['-C'])
+
     # Choose kernel
     if '--polynomial' in params:
         kernel = kernels.polynomialClosure(p)
@@ -77,9 +81,14 @@ def run(args):
         for j in range(n):
             P[i].append(data[i][2] * data[j][2] * kernel([data[i][0], data[i][1]], [data[j][0], data[j][1]]))
 
-    q = -1 * numpy.ones(n)
+    q = -1 * numpy.ones((n, 1))
     h = numpy.zeros_like(q)
     G = -1 * numpy.eye(n)
+
+    # Slack variables
+    if C != 0:
+        G = numpy.concatenate((numpy.eye(n), G))
+        h = numpy.concatenate((C * numpy.ones((n, 1)), h))
 
     # Find \vec{a} which minimizes dual formulation
     r = qp(matrix(P), matrix(q), matrix(G), matrix(h))
