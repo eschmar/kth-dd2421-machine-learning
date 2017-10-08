@@ -59,7 +59,7 @@ def run(args):
 
     C = 0
     if '-C' in params:
-        C = int(params['-C'])
+        C = float(params['-C'])
 
     # Choose kernel
     if '--polynomial' in params:
