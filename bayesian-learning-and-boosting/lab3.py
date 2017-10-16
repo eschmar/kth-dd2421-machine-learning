@@ -22,7 +22,6 @@ from imp import reload
 from labfuns import *
 import random, sys
 
-
 # ## Bayes classifier functions to implement
 # 
 # The lab descriptions state what each function should do.
@@ -186,10 +185,12 @@ def trainBoost(base_classifier, X, labels, T=10):
         vote = classifiers[-1].classify(X)
 
         # TODO: Fill in the rest, construct the alphas etc.
-        # ==========================
-        
-        # alphas.append(alpha) # you will need to append the new alpha
-        # ==========================
+        error = sum(wCur * (1 - (vote == labels)))
+
+        alpha = (np.log(1 - error) - np.log(error)) / 2
+        alphas.append(alpha)
+
+        wCur = wCur * np.exp(np.power(-1, vote == labels) * alpha)
         
     return classifiers, alphas
 
