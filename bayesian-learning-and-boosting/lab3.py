@@ -49,30 +49,6 @@ def computePrior(labels, W=None):
 
     return prior
 
-
-
-# X,y = getData()
-# classes = np.unique(y) # Get the unique examples
-# # Iterate over both index and value
-# for jdx,class in enumerate(classes):
-#     idx = y==class # Returns a true or false with the length of y
-#     # Or more compactly extract the indices for which y==class is true,
-#     # analogous to MATLAB’s find
-#     idx = np.where(y==class)[0]
-#     xlc = X[idx,:] # Get the x for the class labels. Vectors are rows.
-
-def separateDataVectorsByLabel(X, labels):
-    vectors = {}
-    classes = np.unique(labels) # Get the unique examples
-    for jdx,cl in enumerate(classes):
-        # get all indexes where label == class
-        idx = np.where(labels==cl)[0]
-        # extract all vectors with indices in idx
-        xlc = X[idx,:]
-        # write to result
-        vectors[cl] = xlc
-    return vectors
-
 # NOTE: you do not need to handle the W argument for this part!
 # in:      X - N x d matrix of N data points
 #     labels - N vector of class labels
@@ -90,27 +66,30 @@ def mlParams(X, labels, W=None):
     mu = np.zeros((Nclasses,Ndims))
     sigma = np.zeros((Nclasses,Ndims,Ndims))
 
-    vectors = separateDataVectorsByLabel(X, labels)
+    # split xstars according to classes
+    vectors = {}
+    classes = np.unique(labels) # Get the unique examples
+    for jdx,cl in enumerate(classes):
+        # get all indexes where label == class
+        idx = np.where(labels==cl)[0]
+        # extract all vectors with indices in idx
+        xlc = X[idx,:]
+        xlw = W[idx,:]
+        # write to result
+        vectors[cl] = [xlc, xlw]
 
-    # \mu_k = |frac{\sum_{i|c_i = k} x_i}{N_k}
-    # -> the sum of all data vectors with label k divided by the 
-    #    number of data vectors with label k.
+    # \mu_k = |frac{\sum_{i|c_i = k} w_i * x_i}{\sum_{i|c_i = k} w_i}
     for i in range(Nclasses):
-        mu[i] = sum(vectors[i]) / len(vectors[i])
+        mu[i] = sum(vectors[i][0] * vectors[i][1]) / sum(vectors[i][1])
 
-    # \Sigma_k(m,m) = (1/N_k) * \sum_{} (x_i(m) - \mu(m))^2,
+    # \Sigma_k(m,m) = (1/\sum_{i|c_i = k} w_i) * \sum_{i|c_i = k} w_i * (x_i(m) - \mu_k(m))^2,
     # \Sigma(m,n) = 0 for all m != n
     for i in range(Nclasses):
-        # broadcasting subtraction
-        X = np.array(vectors[i])
+        xs = np.array(vectors[i][0])
         u = np.array(mu[i])
-        x = X - u
+        x = xs - u
 
-        # test
-        # sigma[i] = (1/(len(vectors[i]))) * sum(np.dot(np.transpose(x), x))
-
-        # naive Bayes assumption
-        mean = (1/(len(vectors[i]))) * sum(np.square(x))
+        mean = sum(vectors[i][1] * np.square(x)) / sum(vectors[i][1])
         sigma[i] = np.diag(mean)
 
     return mu, sigma
@@ -166,37 +145,14 @@ class BayesClassifier(object):
 # ## Test the Maximum Likelihood estimates
 # 
 # Call `genBlobs` and `plotGaussian` to verify your estimates.
-
-
 X, labels = genBlobs(centers=5)
 mu, sigma = mlParams(X,labels)
-
-# print("X")
-# print(X, len(X))
-
-# print("labels")
-# print(labels, len(labels))
-
-# print("mu")
-# print(mu)
-
-# print("sigma")
-# print(sigma)
-
 plotGaussian(X,labels,mu,sigma)
-
 
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
-
 testClassifier(BayesClassifier(), dataset='iris', split=0.7)
-
-
-
-#testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
-
-
-
+testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
 plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
 sys.exit()
 
