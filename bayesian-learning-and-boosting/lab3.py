@@ -45,7 +45,8 @@ def computePrior(labels, W=None):
     for jdx,cl in enumerate(classes):
         # get all indexes where label == class
         idx = np.where(labels==cl)[0]
-        prior[jdx] = len(idx) / len(labels)
+        weights = W[idx,:]
+        prior[jdx] = np.sum(weights) / np.sum(W)
 
     return prior
 
