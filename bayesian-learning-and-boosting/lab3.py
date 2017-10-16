@@ -145,16 +145,16 @@ class BayesClassifier(object):
 # ## Test the Maximum Likelihood estimates
 # 
 # Call `genBlobs` and `plotGaussian` to verify your estimates.
-X, labels = genBlobs(centers=5)
-mu, sigma = mlParams(X,labels)
-plotGaussian(X,labels,mu,sigma)
+# X, labels = genBlobs(centers=5)
+# mu, sigma = mlParams(X,labels)
+# plotGaussian(X,labels,mu,sigma)
 
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
-testClassifier(BayesClassifier(), dataset='iris', split=0.7)
-testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
-plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
-sys.exit()
+# testClassifier(BayesClassifier(), dataset='iris', split=0.7)
+# testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
+# plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
+# sys.exit()
 
 # ## Boosting functions to implement
 # 
@@ -185,13 +185,20 @@ def trainBoost(base_classifier, X, labels, T=10):
         vote = classifiers[-1].classify(X)
 
         # TODO: Fill in the rest, construct the alphas etc.
-        error = sum(wCur * (1 - (vote == labels)))
+        condition = np.reshape((vote == labels), (Npts,1))
+        error = np.sum(wCur * (1 - condition))
 
+        #  choose alpha
         alpha = (np.log(1 - error) - np.log(error)) / 2
         alphas.append(alpha)
 
-        wCur = wCur * np.exp(np.power(-1, vote == labels) * alpha)
-        
+        #  update weights
+        factors = np.array(np.exp(np.power(-1, condition) * alpha))
+        factors = np.reshape(factors, (Npts,1))
+
+        wCur = wCur * factors
+        wCur = wCur / sum(wCur)
+
     return classifiers, alphas
 
 # in:       X - N x d matrix of N data points
@@ -210,10 +217,10 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
         votes = np.zeros((Npts,Nclasses))
 
         # TODO: implement classificiation when we have trained several classifiers!
-        # here we can do it by filling in the votes vector with weighted votes
-        # ==========================
-        
-        # ==========================
+        for i in range(Ncomps):
+            temp = classifiers[i].classify(X)
+            for j in range(Npts):
+                votes[j][temp[j]] += alphas[i]
 
         # one way to compute yPred after accumulating the votes
         return np.argmax(votes,axis=1)
@@ -245,7 +252,7 @@ class BoostClassifier(object):
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
-#testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
+testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
 
 
 
@@ -253,9 +260,9 @@ class BoostClassifier(object):
 
 
 
-#plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
+plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
 
-
+sys.exit()
 # Now repeat the steps with a decision tree classifier.
 
 
