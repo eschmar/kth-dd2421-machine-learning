@@ -186,7 +186,7 @@ def trainBoost(base_classifier, X, labels, T=10):
 
         # TODO: Fill in the rest, construct the alphas etc.
         condition = np.reshape((vote == labels), (Npts,1))
-        error = np.sum(wCur * (1 - condition))
+        error = np.sum(wCur * (1 - condition)) + 1e-15
 
         #  choose alpha
         alpha = (np.log(1 - error) - np.log(error)) / 2
