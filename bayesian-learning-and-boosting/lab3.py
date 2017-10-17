@@ -54,11 +54,22 @@ def computePrior(labels, W=None):
 #     labels - N vector of class labels
 # out:    mu - C x d matrix of class means (mu[i] - class i mean)
 #      sigma - C x d x d matrix of class covariances (sigma[i] - class i sigma)
-def mlParams(X, labels, W=None):
+def mlParams(X, labels, W=None, theta=None):
     assert(X.shape[0]==labels.shape[0])
     Npts,Ndims = np.shape(X)
     classes = np.unique(labels)
     Nclasses = np.size(classes)
+
+    # rotate the data set by theta degrees
+    if theta is not None:
+        theta = np.radians(theta)
+        cos = np.cos(theta)
+        sin = np.sin(theta)
+
+        R = np.matrix([[cos, -sin], [sin, cos]])
+
+        for i in range(len(X)):
+            X[i] = np.dot(R, X[i])
 
     if W is None:
         W = np.ones((Npts,1))/float(Npts)
